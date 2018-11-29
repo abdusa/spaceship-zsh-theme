@@ -7,14 +7,14 @@
 # Configuration
 # ------------------------------------------------------------------------------
 
-SPACESHIP_HG_STATUS_SHOW="${SPACESHIP_HG_STATUS_SHOW:=true}"
-SPACESHIP_HG_STATUS_PREFIX="${SPACESHIP_HG_STATUS_PREFIX:=" ["}"
-SPACESHIP_HG_STATUS_SUFFIX="${SPACESHIP_HG_STATUS_SUFFIX:="]"}"
-SPACESHIP_HG_STATUS_COLOR="${SPACESHIP_HG_STATUS_COLOR:="red"}"
-SPACESHIP_HG_STATUS_UNTRACKED="${SPACESHIP_HG_STATUS_UNTRACKED:="?"}"
-SPACESHIP_HG_STATUS_ADDED="${SPACESHIP_HG_STATUS_ADDED:="+"}"
-SPACESHIP_HG_STATUS_MODIFIED="${SPACESHIP_HG_STATUD_MODIFIED:="!"}"
-SPACESHIP_HG_STATUS_DELETED="${SPACESHIP_HG_STATUS_DELETED:="✘"}"
+SPACESHIP_HG_STATUS_SHOW="${SPACESHIP_HG_STATUS_SHOW=true}"
+SPACESHIP_HG_STATUS_PREFIX="${SPACESHIP_HG_STATUS_PREFIX=" ["}"
+SPACESHIP_HG_STATUS_SUFFIX="${SPACESHIP_HG_STATUS_SUFFIX="]"}"
+SPACESHIP_HG_STATUS_COLOR="${SPACESHIP_HG_STATUS_COLOR="red"}"
+SPACESHIP_HG_STATUS_UNTRACKED="${SPACESHIP_HG_STATUS_UNTRACKED="?"}"
+SPACESHIP_HG_STATUS_ADDED="${SPACESHIP_HG_STATUS_ADDED="+"}"
+SPACESHIP_HG_STATUS_MODIFIED="${SPACESHIP_HG_STATUD_MODIFIED="!"}"
+SPACESHIP_HG_STATUS_DELETED="${SPACESHIP_HG_STATUS_DELETED="✘"}"
 
 # ------------------------------------------------------------------------------
 # Section
@@ -24,7 +24,7 @@ SPACESHIP_HG_STATUS_DELETED="${SPACESHIP_HG_STATUS_DELETED:="✘"}"
 spaceship_hg_status() {
   [[ $SPACESHIP_HG_STATUS_SHOW == false ]] && return
 
-  _is_hg || return
+  spaceship::is_hg || return
 
   local INDEX=$(hg status 2>/dev/null) hg_status=""
 
@@ -32,16 +32,19 @@ spaceship_hg_status() {
   # provide uniform view across git and mercurial indicators
   if $(echo "$INDEX" | grep -E '^\? ' &> /dev/null); then
     hg_status="$SPACESHIP_HG_STATUS_UNTRACKED$hg_status"
-  elif $(echo "$INDEX" | grep -E '^A ' &> /dev/null); then
+  fi
+  if $(echo "$INDEX" | grep -E '^A ' &> /dev/null); then
     hg_status="$SPACESHIP_HG_STATUS_ADDED$hg_status"
-  elif $(echo "$INDEX" | grep -E '^M ' &> /dev/null); then
+  fi
+  if $(echo "$INDEX" | grep -E '^M ' &> /dev/null); then
     hg_status="$SPACESHIP_HG_STATUS_MODIFIED$hg_status"
-  elif $(echo "$INDEX" | grep -E '^(R|!)' &> /dev/null); then
+  fi
+  if $(echo "$INDEX" | grep -E '^(R|!)' &> /dev/null); then
     hg_status="$SPACESHIP_HG_STATUS_DELETED$hg_status"
   fi
 
   if [[ -n $hg_status ]]; then
-    _prompt_section \
+    spaceship::section \
       "$SPACESHIP_HG_STATUS_COLOR" \
       "$SPACESHIP_HG_STATUS_PREFIX"$hg_status"$SPACESHIP_HG_STATUS_SUFFIX"
   fi

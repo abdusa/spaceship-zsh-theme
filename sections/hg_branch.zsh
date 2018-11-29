@@ -7,10 +7,10 @@
 # Configuration
 # ------------------------------------------------------------------------------
 
-SPACESHIP_HG_BRANCH_SHOW="${SPACESHIP_HG_BRANCH_SHOW:=true}"
-SPACESHIP_HG_BRANCH_PREFIX="${SPACESHIP_HG_BRANCH_PREFIX:="$SPACESHIP_HG_SYMBOL"}"
-SPACESHIP_HG_BRANCH_SUFFIX="${SPACESHIP_HG_BRANCH_SUFFIX:=""}"
-SPACESHIP_HG_BRANCH_COLOR="${SPACESHIP_HG_BRANCH_COLOR:="magenta"}"
+SPACESHIP_HG_BRANCH_SHOW="${SPACESHIP_HG_BRANCH_SHOW=true}"
+SPACESHIP_HG_BRANCH_PREFIX="${SPACESHIP_HG_BRANCH_PREFIX="$SPACESHIP_HG_SYMBOL"}"
+SPACESHIP_HG_BRANCH_SUFFIX="${SPACESHIP_HG_BRANCH_SUFFIX=""}"
+SPACESHIP_HG_BRANCH_COLOR="${SPACESHIP_HG_BRANCH_COLOR="magenta"}"
 
 # ------------------------------------------------------------------------------
 # Section
@@ -19,9 +19,15 @@ SPACESHIP_HG_BRANCH_COLOR="${SPACESHIP_HG_BRANCH_COLOR:="magenta"}"
 spaceship_hg_branch() {
   [[ $SPACESHIP_HG_BRANCH_SHOW == false ]] && return
 
-  _is_hg || return
+  spaceship::is_hg || return
 
-  _prompt_section \
+  local hg_info=$(hg log -r . -T '{activebookmark}')
+
+  if [[ -z $hg_info ]]; then
+    hg_info=$(hg branch)
+  fi
+
+  spaceship::section \
     "$SPACESHIP_HG_BRANCH_COLOR" \
-    "$SPACESHIP_HG_BRANCH_PREFIX"$(hg branch)"$SPACESHIP_HG_BRANCH_SUFFIX"
+    "$SPACESHIP_HG_BRANCH_PREFIX"$hg_info"$SPACESHIP_HG_BRANCH_SUFFIX"
 }

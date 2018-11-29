@@ -1,7 +1,7 @@
-#!/usr/bin/env sh
+#!/usr/bin/env zsh
 #
 # Author: Denys Dovhan, denysdovhan.com
-# https://github.com/denysdovhan/spaceship-zsh-theme
+# https://github.com/denysdovhan/spaceship-prompt
 
 # ------------------------------------------------------------------------------
 # Colors
@@ -26,7 +26,7 @@ fi
 # ------------------------------------------------------------------------------
 
 ZSHRC="$HOME/.zshrc"
-USER_SOURCE="$HOME/.spaceship-zsh-theme"
+USER_SOURCE="$HOME/.spaceship-prompt"
 GLOBAL_DEST="/usr/local/share/zsh/site-functions/prompt_spaceship_setup"
 USER_DEST="$HOME/.zfunctions/prompt_spaceship_setup"
 
@@ -69,26 +69,30 @@ rmln() {
 # Checkings and uninstalling process
 # ------------------------------------------------------------------------------
 
-# Remove $GLOBAL_DEST symlink
-if [[ -L "$GLOBAL_DEST" || -L "$USER_DEST" ]]; then
-  rmln "$GLOBAL_DEST"
-  rmln "$USER_DEST"
-else
-  warn "Symlinks to Spaceship are not found."
-fi
+main() {
+  # Remove $GLOBAL_DEST symlink
+  if [[ -L "$GLOBAL_DEST" || -L "$USER_DEST" ]]; then
+    rmln "$GLOBAL_DEST"
+    rmln "$USER_DEST"
+  else
+    warn "Symlinks to Spaceship are not found."
+  fi
 
-# Remove Spaceship from .zshrc
-if grep -q "spaceship" "$ZSHRC"; then
-  info "Removing Spaceship from ~/.zshrc"
-  # Remove enabling statements from ~/.zshrc
-  sed -i '' '/^# Set Spaceship ZSH as a prompt$/d' $ZSHRC
-  sed -i '' '/^autoload -U promptinit; promptinit$/d' $ZSHRC
-  sed -i '' '/^prompt spaceship$/d' $ZSHRC
-  # Remove Spaceship configuration
-  sed -i '' '/^SPACESHIP_.*$/d' $ZSHRC
-else
-  warn "Spaceship configuration not found in ~/.zshrc!"
-fi
+  # Remove Spaceship from .zshrc
+  if grep -q "spaceship" "$ZSHRC"; then
+    info "Removing Spaceship from ~/.zshrc"
+    # Remove enabling statements from ~/.zshrc
+    sed -i '' '/^# Set Spaceship ZSH as a prompt$/d' $ZSHRC
+    sed -i '' '/^autoload -U promptinit; promptinit$/d' $ZSHRC
+    sed -i '' '/^prompt spaceship$/d' $ZSHRC
+    # Remove Spaceship configuration
+    sed -i '' '/^SPACESHIP_.*$/d' $ZSHRC
+  else
+    warn "Spaceship configuration not found in ~/.zshrc!"
+  fi
 
-success "Done! Spaceship installation have to be removed!"
-success "Please, reload your terminal."
+  success "Done! Spaceship installation have to be removed!"
+  success "Please, reload your terminal."
+}
+
+main "$@"
